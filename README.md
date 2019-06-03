@@ -1,2 +1,2 @@
-# pass
-Several functions for facilitating certain tasks.
+# Multiple Model Deterioration Modeling (MMDM)
+update
