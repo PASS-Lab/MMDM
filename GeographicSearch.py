@@ -89,7 +89,7 @@ def create_kml(indices, coordinates, path):
 
 def dms_to_deg(coordinate):
     """
-    To attempt dealing with NBI's particularly egregious method of expressing coordinates
+    To attempt dealing with NBI's method of expressing coordinates
     coordinate is a tuple (latitude, longitude)
     returns a tuple of properly formatted coordinates
     """
