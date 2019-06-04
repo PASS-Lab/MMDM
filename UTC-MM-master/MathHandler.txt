@@ -1,0 +1,34 @@
+"""
+Author: Christian Lozoya, 2017
+"""
+
+import numpy as np
+import pandas as pd
+from Utilities import DataHandler as dh
+
+
+def count_vector(dataFrame):
+    countVector = pd.Series(index=dh.get_uniques(dataFrame)).fillna(0)
+    for j, column in enumerate(dataFrame.columns):
+        for i, row in enumerate(dataFrame.index):
+            a = dataFrame.iloc[i, j]
+            if not pd.isnull(a):
+                countVector[dataFrame.iloc[i, j]] += 1
+    return countVector
+
+
+def frequency(dataFrame):
+    count = count_vector(dataFrame)
+    frq = count.divide(count.sum())
+    return frq
+	
+	
+def symmetrical_matrix(dataFrame):
+    """
+    dataFrame: pandas DataFrame
+    return: pandas DataFrame
+    """
+    labels = dh.get_uniques(dataFrame)
+    symmetricalLabelMatrix = pd.DataFrame(columns=labels, index=labels)
+    symmetricalLabelMatrix.fillna(0, inplace=True)
+    return symmetricalLabelMatrix

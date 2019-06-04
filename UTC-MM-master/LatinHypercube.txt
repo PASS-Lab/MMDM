@@ -1,0 +1,58 @@
+"""
+Author: Christian Lozoya, 2018
+"""
+
+import numpy as np
+import os
+import pandas as pd
+#from Utilities import DataHandler as dh
+
+
+def get_strata(iterations):
+    randomNumbers = []
+    strata = [1/iterations]
+    #strata = np.empty(iterations)
+    #strata[0] = 1/iterations
+
+    for i in range(1,iterations):
+        strata.append(strata[-1]+1/iterations)
+        #strata[i] = strata[i-1] + 1/iterations
+
+    for i in range(iterations):
+        if i == 0:
+            randomNumbers.append(np.random.uniform(0,strata[i]))
+        else:
+            randomNumbers.append(np.random.uniform(strata[i-1], strata[i]))
+    return randomNumbers
+
+def latin_hypercube(distribution, iterations,
+                    transitionProbabilityMatrix):
+    try:
+        strata = get_strata(iterations)
+        simulation = []
+        likelihood = []
+        for i in range(iterations):
+            sum = 0
+            for state in distribution.index:
+                sum += distribution.loc[state]
+                if sum >= strata[i]:
+                    simulation.append(state)
+                    if len(simulation) > 1:
+                        likelihood.append(get_likelihood(simulation[-1],
+                                                         simulation[-2],
+                                                         transitionProbabilityMatrix))
+                    break
+        latinHypercube = pd.DataFrame(simulation)
+        likelihood = pd.DataFrame(likelihood)
+        return latinHypercube, likelihood
+    except Exception as e:
+        print(e)
+
+
+def get_likelihood(proposedState, priorState, transitionProbabilityMatrix):
+    pX0 = transitionProbabilityMatrix.loc[priorState, proposedState]
+    pX1 = transitionProbabilityMatrix.loc[proposedState, priorState]
+    if pX1 != 0:
+        return pX0 / pX1
+    else:
+        return 0

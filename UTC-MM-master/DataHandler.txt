@@ -1,0 +1,49 @@
+"""
+Author: Christian Lozoya, 2017
+"""
+
+def concat_data(seriesList, columns=None, axis=1):
+    """
+    Concatenate list of pandas Series into a DataFrame.
+    Each Series will become a column of the resulting DataFrame if axis is set to 1.
+    Otherwise, if axis is set to 0, the result will be a pandas DataFrame containing one single column
+    and the values of each Series in the list will be joined with respect to their original sequence.
+    For example, if seriesList is:
+        [pandas.Series([1, 'a', 3]), pandas.Series(['f', None])]
+    and axis is set to 1, the result will be:
+        0 1
+    0   1 f
+    1   a None
+    2   3 Nan
+    otherwise, if axis is set to 0, the result will be:
+        0
+    0   1
+    1   a
+    2   3
+    0   f
+    1   None
+    seriesList: list of pandas Series
+    columns: list of str - indicates the names that the columns of the resulting DataFrame will be given.
+    axis: int - indicates whether to concatenate by row or by column
+    return: pandas DataFrame
+    """
+    cnc = pd.DataFrame(pd.concat(seriesList, axis=axis))
+    if columns: cnc.columns = columns
+    return cnc
+	
+
+def normalize_axis(dataFrame, axis=0):
+    """
+    Normalize dataFrame by axis.
+    dataFrame: pandas DataFrame
+    axis: int - If 0, the rows will be normalized. If 1, the columns will be normalized
+    """
+    try:
+        if axis == 0:
+            nrm = dataFrame.div(dataFrame.sum(axis=1), axis=0)
+        if axis == 1:
+            nrm = dataFrame.div(dataFrame.sum(axis=0), axis=1)
+        nrm.fillna(0, inplace=True)
+        return nrm
+    except Exception as e:
+        print(e)
